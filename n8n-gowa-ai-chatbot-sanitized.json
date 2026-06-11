@@ -1,0 +1,786 @@
+{
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "final-output",
+              "name": "output",
+              "value": "={{ $json.output }}",
+              "type": "string"
+            },
+            {
+              "id": "final-from",
+              "name": "from",
+              "value": "={{ $json.from }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        2208,
+        1104
+      ],
+      "id": "2182cc52-1b25-411e-ad0f-0ae181cefda8",
+      "name": "Format Final Data"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "readMessage",
+        "phoneOrGroupId": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}",
+        "messageId": "={{ $('Webhook2').item.json.body.payload.id }}"
+      },
+      "type": "@aldinokemal2104/n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [
+        1248,
+        1248
+      ],
+      "id": "031d6691-d5e1-4239-af16-335614b0031f",
+      "name": "tandai dibaca4",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendChatPresence",
+        "phoneNumber": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}"
+      },
+      "type": "@aldinokemal2104/n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [
+        1568,
+        1280
+      ],
+      "id": "a4b16242-dc2c-42ef-b5f0-e536e618a846",
+      "name": "munculkan sedang mengetik5",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "sendChatPresence",
+        "phoneNumber": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}"
+      },
+      "type": "@aldinokemal2104/n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [
+        1744,
+        864
+      ],
+      "id": "366ea6aa-8690-4687-ae45-ba57dc940c73",
+      "name": "munculkan sedang mengetik6",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "detect-image",
+              "leftValue": "={{ $('Webhook2').item.json.body.payload.image }}",
+              "rightValue": "statics/media",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        1072,
+        1104
+      ],
+      "id": "b606b649-0b4d-4588-bdc5-7fdeca32e6ad",
+      "name": "If Image Message2"
+    },
+    {
+      "parameters": {
+        "resource": "image",
+        "operation": "analyze",
+        "modelId": {
+          "__rl": true,
+          "value": "gpt-4o-mini",
+          "mode": "list",
+          "cachedResultName": "GPT-4O-MINI"
+        },
+        "inputType": "base64",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1.8,
+      "position": [
+        1408,
+        864
+      ],
+      "id": "5f787cbc-5745-4eb0-b2f0-2bdd63411b15",
+      "name": "Analyze image2",
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "={{ $env.GOWA_BASE_URL }}/{{ $json.body.payload.image }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "goWhatsappApi",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        1248,
+        864
+      ],
+      "id": "818234c0-c7d3-451b-8b85-00b3fd89516b",
+      "name": "HTTP Request2",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        2048,
+        1104
+      ],
+      "id": "3487b09c-9bf5-49cd-bdc7-3b5b6be4e3e5",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "img-output",
+              "name": "output",
+              "value": "={{ $('Analyze image2').item.json.content }}",
+              "type": "string"
+            },
+            {
+              "id": "img-from",
+              "name": "from",
+              "value": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1968,
+        864
+      ],
+      "id": "ec71762d-49fa-44ea-8705-b2ee463d02fc",
+      "name": "Edit Fields2"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "msg-output",
+              "name": "output",
+              "value": "={{ $('Webhook2').item.json.body.payload.body }}",
+              "type": "string"
+            },
+            {
+              "id": "msg-from",
+              "name": "from",
+              "value": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        1808,
+        1280
+      ],
+      "id": "dddddc97-a9d4-4802-a60e-f7155c35a820",
+      "name": "Edit Fields6"
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "REPLACE_WITH_YOUR_WEBHOOK_PATH",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        608,
+        1120
+      ],
+      "id": "f3a0290f-d663-4886-b170-a886fa9581ce",
+      "name": "Webhook2",
+      "webhookId": "REPLACE_WITH_YOUR_WEBHOOK_ID"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "admin-1",
+              "leftValue": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}",
+              "rightValue": "ADMIN_WHATSAPP_1",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "admin-2",
+              "leftValue": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}",
+              "rightValue": "ADMIN_WHATSAPP_2",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "admin-3",
+              "leftValue": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}",
+              "rightValue": "ADMIN_WHATSAPP_3",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              }
+            },
+            {
+              "id": "bdad705a-996b-4d0f-893c-b86657f0626b",
+              "leftValue": "={{ $('Webhook2').item.json.body.payload.chat_id }}",
+              "rightValue": "@g.us",
+              "operator": {
+                "type": "string",
+                "operation": "notContains"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        832,
+        1120
+      ],
+      "id": "fc808cb9-0a23-4722-8bb8-ee5833aa9c96",
+      "name": "If2"
+    },
+    {
+      "parameters": {
+        "model": {
+          "__rl": true,
+          "value": "gpt-4.1-mini",
+          "mode": "list",
+          "cachedResultName": "gpt-4.1-mini"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1.2,
+      "position": [
+        2512,
+        1360
+      ],
+      "id": "392f6f88-727c-4b8a-acb5-28eb13d18820",
+      "name": "OpenAI Chat Model2",
+      "credentials": {
+        "openAiApi": {
+          "id": "REPLACE_WITH_OPENAI_CREDENTIAL_ID",
+          "name": "OpenAI account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.output }}",
+        "options": {
+          "systemMessage": "=Kamu adalah Customer Service WhatsApp profesional untuk\nFIDESAIN – Jasa Desain Grafis & Edit Foto Realistis.\n\nTugas utama kamu adalah melayani customer seperti manusia asli yang ramah, jelas, dan profesional melalui WhatsApp.\n\n════════════════════════════════════\n🔒 ATURAN PALING WAJIB (TIDAK BOLEH DILANGGAR)\n════════════════════════════════════\n\nSETIAP menerima pesan customer:\n\n1. WAJIB memanggil tool `read` untuk mengecek data berdasarkan nomor WhatsApp pengirim.\n2. JIKA data BELUM ADA → WAJIB memanggil tool `insert` dengan:\n   - whatsapp = nomor WhatsApp customer\n   - status = NEW\n3. JIKA data SUDAH ADA → status di DataTable adalah SUMBER KEBENARAN UTAMA.\n4. DILARANG menentukan status berdasarkan memory atau asumsi.\n5. DILARANG membalas pesan SEBELUM memanggil tool `read`.\n\nSTATUS ORDER LEBIH PENTING DARI INGATAN PERCAKAPAN.\n\n════════════════════════════════════\n📌 DEFINISI STATUS ORDER (WAJIB KONSISTEN)\n════════════════════════════════════\n\nNEW\n→ Customer baru, data belum lengkap\n\nDATA_LENGKAP\n→ Semua data sudah lengkap, belum bayar\n\nBAYAR\n→ Pembayaran sudah diterima\n\nPROSES_DESAIN\n→ Desain sedang dikerjakan\n\nSELESAI\n→ Order sudah selesai\n\nJANGAN membuat status baru.\nJANGAN mengubah nama status.\n\n════════════════════════════════════\n📌 ATURAN PER STATUS (ANTI NANYA ULANG)\n════════════════════════════════════\n\n▶ STATUS: NEW\n- Tanya HANYA data yang belum ada\n- Jangan sebut harga\n- Jangan bicara pembayaran\n\n▶ STATUS: DATA_LENGKAP\n- JANGAN tanya data lagi\n- Sebutkan harga sesuai layanan\n- Tunggu persetujuan customer\n\n▶ STATUS: BAYAR\n- JANGAN minta pembayaran\n- JANGAN tanya data\n- Konfirmasi pembayaran diterima\n- WAJIB update status ke PROSES_DESAIN\n\n▶ STATUS: PROSES_DESAIN\n- JANGAN tanya data\n- JANGAN menyatakan desain selesai\n- Jika ditanya \"sudah selesai?\" → jawab sedang dikerjakan\n- Estimasi maksimal 1 hari\n\n▶ STATUS: SELESAI\n- JANGAN menjual ulang\n- JANGAN memulai order baru\n- KECUALI customer secara jelas meminta order baru\n\n════════════════════════════════════\n📌 UPDATE STATUS (WAJIB VIA TOOL)\n════════════════════════════════════\n\nGunakan tool `update`:\n\n- Setelah semua data terkumpul\n  → status = DATA_LENGKAP\n\n- Setelah menerima bukti transfer berupa GAMBAR\n  → status = BAYAR\n\n- Setelah konfirmasi pembayaran\n  → status = PROSES_DESAIN\n\n- Setelah hasil disetujui customer\n  → status = SELESAI\n\nSTATUS HARUS DISIMPAN DI DATATABLE.\n\n════════════════════════════════════\n📌 ATURAN BALASAN (WA STYLE MANUSIA)\n════════════════════════════════════\n\n- Maksimal 2 kalimat per pesan\n- 1 pesan = 1 tujuan utama\n- Bahasa santai & ramah\n- Maksimal 1 emoji per pesan\n- Jangan menyebut SOP, sistem, database, atau AI\n- Harus terasa seperti manusia\n\n════════════════════════════════════\n📌 DATA YANG BOLEH DITANYAKAN\n════════════════════════════════════\n\n🎨 JASA DESAIN\n- Informasi yang ingin dicantumkan\n- Ukuran desain\n- Jumlah desain\n\n📸 JASA EDIT FOTO\n- Jumlah orang\n- Pose\n- Pakaian\n\nJANGAN menanyakan data di luar daftar ini.\n\n════════════════════════════════════\n📏 ATURAN PERHITUNGAN JUMLAH DESAIN (WAJIB)\n════════════════════════════════════\n\nJumlah desain dihitung berdasarkan UKURAN AKHIR DESAIN.\n\nDEFINISI:\n✅ 1 ukuran = 1 desain.\n\nWalaupun desain visual sama, jika ukuran berbeda maka dihitung sebagai desain berbeda dan memiliki harga masing-masing.\n\nContoh:\n- Banner 2x1m, 3x1m, 4x1m → total 3 desain.\n- Feed IG 1:1 (3 pcs) + Story 9:16 (3 pcs) → total 6 desain.\n\nJika customer mengatakan:\n“Desainnya sama tapi beda ukuran”\n\nAI WAJIB menjelaskan secara ramah bahwa setiap ukuran tetap dihitung desain terpisah.\n\nSaat STATUS NEW:\n- Pastikan semua ukuran disebutkan.\n- Klarifikasi jika ukuran lebih dari satu.\n- Jangan menyebut harga.\n\nContoh:\n“Kak, kalau ukurannya berbeda nanti dihitung per ukuran ya 😊\nBoleh sebutkan semua ukurannya?”\n\nSaat STATUS DATA_LENGKAP:\n- Harga = harga layanan × jumlah ukuran desain.\n- Jelaskan singkat tanpa menyebut aturan internal.\n\n════════════════════════════════════\n📌 HARGA (WAJIB PERSIS)\n════════════════════════════════════\n\nDESAIN:\n\nBanner / Spanduk:\n≤4 foto: Rp65.000\n≤9 foto: Rp95.000\n>9 foto: Rp120.000\n\nMenu: Rp95.000\nLogo:\n- 2 opsi: Rp215.000\n- 4 opsi: Rp520.000\n- Premium: Rp1.520.000\n\nBrosur: Rp120.000\nFeed / Story / Konten Sosmed: Rp80.000\nStiker: Rp95.000\nLainnya: Rp120.000\n\nEDIT FOTO:\n- 1 orang: Rp65.000\n- Tambahan orang: +Rp10.000/orang\n- Pas foto: Rp55.000\n\n════════════════════════════════════\n💰 PEMBAYARAN\n════════════════════════════════════\n\nPembayaran di awal.\n\nMetode:\n• BSI YOUR_BANK_ACCOUNT_NUMBER a.n YOUR_ACCOUNT_NAME\n• DANA YOUR_DANA_NUMBER\n\nMinta bukti transfer dalam bentuk GAMBAR.\n\nJika menerima bukti transfer:\n- Ucapkan terima kasih\n- Sebutkan nominal terbaca\n- Konfirmasi pembayaran diterima\n- Update status\n- Informasikan revisi maksimal 2x\n- Revisi ke-3 dikenakan Rp15.000/revisi\n\n════════════════════════════════════\n🎯 TARGET AKHIR FLOW\n════════════════════════════════════\n\nData lengkap\n→ kasih harga\n→ customer bayar\n→ proses desain\n→ revisi (jika ada)\n→ kirim hasil\n→ SELESAI\n\nAkun media sosial:\nInstagram: @your_social_media\nTikTok: @your_social_media\n\nContoh desain dan edit foto tersedia di akun media sosial."
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2,
+      "position": [
+        2640,
+        1104
+      ],
+      "id": "50a99e82-ba91-4ae3-8cb5-b4cbd4d65d5d",
+      "name": "AI Agent2"
+    },
+    {
+      "parameters": {
+        "phoneNumber": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}",
+        "message": "={{ $('AI Agent2').item.json.output }}"
+      },
+      "type": "@aldinokemal2104/n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [
+        3088,
+        1104
+      ],
+      "id": "7da09f72-f90d-4fe8-8e9f-c43c83c5f6a9",
+      "name": "Send a text message2",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.from }}",
+        "contextWindowLength": 50
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        2656,
+        1376
+      ],
+      "id": "1e9bfb50-9f50-456e-a77a-08214bbaa233",
+      "name": "Simple Memory2"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "readMessage",
+        "phoneOrGroupId": "={{ $('Webhook2').item.json.body.payload.chat_id.split('@')[0] }}",
+        "messageId": "={{ $('Webhook2').item.json.body.payload.id }}"
+      },
+      "type": "@aldinokemal2104/n8n-nodes-gowa.gowa",
+      "typeVersion": 1,
+      "position": [
+        1584,
+        864
+      ],
+      "id": "7cf52e0f-396f-468e-bb3c-6712172c2380",
+      "name": "tandai dibaca5",
+      "credentials": {
+        "goWhatsappApi": {
+          "id": "REPLACE_WITH_GOWA_CREDENTIAL_ID",
+          "name": "GOWA account (set in n8n)"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "dataTableId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_DATATABLE_ID",
+          "mode": "list",
+          "cachedResultName": "data order",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/REPLACE_WITH_YOUR_DATATABLE_ID"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "=NEW",
+            "whatsapp": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "whatsapp",
+              "displayName": "whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        3088,
+        1328
+      ],
+      "id": "6791c72d-95a9-4300-b1d9-f6800c39dcd5",
+      "name": "insert2"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "dataTableId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_DATATABLE_ID",
+          "mode": "list",
+          "cachedResultName": "data order",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/REPLACE_WITH_YOUR_DATATABLE_ID"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "keyValue": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}"
+            }
+          ]
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "status": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('status', ``, 'string') }}",
+            "whatsapp": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "whatsapp",
+              "displayName": "whatsapp",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "readOnly": false,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        2816,
+        1376
+      ],
+      "id": "a19f42b6-1f4f-419e-88de-bf00aa2bcfc2",
+      "name": "update2"
+    },
+    {
+      "parameters": {
+        "operation": "get",
+        "dataTableId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_YOUR_DATATABLE_ID",
+          "mode": "list",
+          "cachedResultName": "data order",
+          "cachedResultUrl": "/projects/YOUR_PROJECT_ID/datatables/REPLACE_WITH_YOUR_DATATABLE_ID"
+        },
+        "filters": {
+          "conditions": [
+            {
+              "keyName": "whatsapp",
+              "keyValue": "={{ $('Webhook2').item.json.body.payload.from.split('@')[0] }}"
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.dataTableTool",
+      "typeVersion": 1,
+      "position": [
+        2992,
+        1440
+      ],
+      "id": "b83be09d-88a9-4994-a01d-f678aca7f8bb",
+      "name": "read2"
+    }
+  ],
+  "connections": {
+    "Format Final Data": {
+      "main": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tandai dibaca4": {
+      "main": [
+        [
+          {
+            "node": "munculkan sedang mengetik5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "munculkan sedang mengetik5": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "munculkan sedang mengetik6": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If Image Message2": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request2",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "tandai dibaca4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze image2": {
+      "main": [
+        [
+          {
+            "node": "tandai dibaca5",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request2": {
+      "main": [
+        [
+          {
+            "node": "Analyze image2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Format Final Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields2": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields6": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Webhook2": {
+      "main": [
+        [
+          {
+            "node": "If2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If2": {
+      "main": [
+        [
+          {
+            "node": "If Image Message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model2": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent2": {
+      "main": [
+        [
+          {
+            "node": "Send a text message2",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory2": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "tandai dibaca5": {
+      "main": [
+        [
+          {
+            "node": "munculkan sedang mengetik6",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "insert2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "read2": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent2",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": false,
+    "note": "Sanitized public template. Configure credentials and environment variables after import."
+  }
+}
